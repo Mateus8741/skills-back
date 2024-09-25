@@ -16,29 +16,28 @@ datasource db {
 
 model User {
   id              String     @id @default(cuid())
-  fistName        String
+  firstName       String
   lastName        String
   email           String     @unique
   password        String
-  number          String
+  number          Int
   isAuthenticated Boolean    @default(false)
   rating          Float      @default(0)
-  locationId      String
   location        Location[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 }
 
 model Location {
-  id        String   @id @default(cuid())
-  address   String
-  city      String
-  state     String
-  number    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?
+  id          String   @id @default(cuid())
+  street      String
+  city        String
+  state       String
+  houseNumber Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model Service {
