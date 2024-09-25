@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "db:seed": "tsx --env-file .env src/prisma/seed.ts",
-    "dk:up": "docker-compose up --build",
+    "dk:up": "docker-compose up",
+    "dk:build": "docker-compose up --build",
     "dk:down": "docker compose down --rmi 'all' -v"
   },
   "license": "MIT",
