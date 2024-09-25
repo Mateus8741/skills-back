@@ -12,9 +12,8 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
-import { changePassword } from "./routes/Auth/changePassword";
-import { loginUser } from "./routes/Auth/loginUser";
-import { registerUser } from "./routes/Auth/registerUser";
+import { LoginUser } from "./routes/Auth/login-user";
+import { RegisterUser } from "./routes/Auth/register-user";
 
 const app = fastify().withTypeProvider();
 
@@ -48,9 +47,8 @@ app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
 app.register(auth)
 
-app.register(registerUser)
-app.register(loginUser)
-app.register(changePassword)
+app.register(RegisterUser)
+app.register(LoginUser)
 
 app.listen({
     port: 3100,
