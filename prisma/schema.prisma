@@ -41,11 +41,24 @@ model Location {
 }
 
 model Service {
-  id          String   @id @default(cuid())
-  name        String
-  price       Float
-  serviceType String
-  local       String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String            @id @default(cuid())
+  name           String
+  description    String
+  price          Float
+  category       String
+  serviceLocaton ServiceLocation[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model ServiceLocation {
+  id        String   @id @default(cuid())
+  street    String
+  city      String
+  state     String
+  number    Int
+  serviceId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Service   Service  @relation(fields: [serviceId], references: [id])
 }
