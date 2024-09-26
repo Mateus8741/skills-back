@@ -15,7 +15,7 @@ export async function RegisterUser(app: FastifyInstance) {
         },
     }, async (request, reply) => {
        try {
-        const { email,firstName,isAuthenticated,lastName,location,number,password } = request.body
+        const { email,firstName,isAuthenticated,lastName,location,phoneNumber,password } = request.body
         const {city,houseNumber,state,street} = location
 
         const alreadyExistsSameEmail = await prisma.user.findFirst({
@@ -46,7 +46,7 @@ export async function RegisterUser(app: FastifyInstance) {
                         street,
                     },
                 },
-                number,
+                phoneNumber,
                 password: hashedPassword,
             },
         })

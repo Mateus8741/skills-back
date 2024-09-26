@@ -4,7 +4,7 @@ import { prisma } from '../../prisma/prisma-client'
 import { ServiceSchema } from '../../schemas/register-service-schema'
 
 export async function CreateService(app: FastifyInstance) {
-  app.withTypeProvider<ZodTypeProvider>().post('/service-create', {
+  app.withTypeProvider<ZodTypeProvider>().post('/service', {
     schema: {
         body: ServiceSchema,
         summary: 'Create a new service',

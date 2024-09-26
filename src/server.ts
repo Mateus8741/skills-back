@@ -15,6 +15,7 @@ import fastifyJwt from "@fastify/jwt";
 import { LoginUser } from "./routes/Auth/login-user";
 import { RegisterUser } from "./routes/Auth/register-user";
 import { CreateService } from "./routes/Services/create-service";
+import { GetService } from "./routes/Services/get-service";
 
 const app = fastify().withTypeProvider();
 
@@ -52,6 +53,7 @@ app.register(RegisterUser)
 app.register(LoginUser)
 
 app.register(CreateService)
+app.register(GetService)
 
 app.listen({
     port: 3100,
