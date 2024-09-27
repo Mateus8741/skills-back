@@ -1,6 +1,20 @@
 name: skills-server
 
 services:
+  skills-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./:/home/node/app
+      - /home/node/app/dist
+      - /home/node/app/node_modules
+    depends_on:
+      - pg
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
   pg:
     image: bitnami/postgresql:13.16.0
     ports:
