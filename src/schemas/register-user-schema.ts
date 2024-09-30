@@ -7,9 +7,16 @@ const RegisterSchema = z.object({
   phoneNumber: number().positive().int(),
   location: z.object({
     street: z.string().min(2, 'Nome da rua muito curto').max(50, 'Nome da rua muito longo'),
-    city: z.string().min(2, 'Nome da cidade muito curto').max(50, 'Nome da cidade muito longo'),
-    state: z.string().length(2, 'Estado deve ter 2 caracteres'),
-    houseNumber: number().positive('Número deve ser positivo').int().min(1, 'Número da casa deve ser maior que 0'),
+    neighborhood: z
+      .string()
+      .min(2, 'Nome do bairro muito curto')
+      .max(50, 'Nome do bairro muito longo'),
+    complement: z.string().optional(),
+    reference: z.string().optional(),
+    houseNumber: z
+      .number()
+      .min(1, 'Número da casa deve ser maior que 0')
+      .int(),
   }),
   isAuthenticated: z.boolean().default(false),
   password: z.string().min(6, 'Senha muito curta').max(15, 'Senha muito longa'),
