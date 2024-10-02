@@ -1,10 +1,10 @@
-import { number, z } from 'zod';
+import { z } from 'zod';
 
 const RegisterSchema = z.object({
   firstName: z.string().min(2, 'Nome muito curto').max(50, 'Nome muito longo'),
   lastName: z.string().min(2, 'Sobrenome muito curto').max(50, 'Sobrenome muito longo'),
   email: z.string().email('Email inválido'),
-  phoneNumber: number().positive().int(),
+  phoneNumber: z.string(),
   location: z.object({
     street: z.string().min(2, 'Nome da rua muito curto').max(50, 'Nome da rua muito longo'),
     neighborhood: z

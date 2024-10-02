@@ -20,7 +20,7 @@ model User {
   lastName        String
   email           String     @unique
   password        String
-  phoneNumber     Int
+  phoneNumber     String
   isAuthenticated Boolean    @default(false)
   rating          Float      @default(0)
   location        Location[]
