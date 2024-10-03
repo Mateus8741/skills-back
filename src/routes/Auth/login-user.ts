@@ -4,8 +4,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import type { infer as ZodInfer } from 'zod'
 import { prisma } from '../../prisma/prisma-client'
 import {
-    LoginSchema,
-    type RegisterSchema,
+  LoginSchema,
+  type RegisterSchema,
 } from '../../schemas/register-user-schema'
 
 export async function LoginUser(app: FastifyInstance) {
@@ -54,8 +54,8 @@ export async function LoginUser(app: FastifyInstance) {
         )
 
         return reply.status(200).send({
-            message: 'Usuário logado com sucesso',
             token,
+            user,
         })
         
       } catch (error) {
