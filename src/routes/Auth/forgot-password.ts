@@ -7,7 +7,7 @@ import { ChangeSchema } from '../../schemas/change-password-schema'
 export async function ForgotPassword(app: FastifyInstance) {
   app
     .withTypeProvider<ZodTypeProvider>()
-    .patch('/chanePassword', {
+    .patch('/changePassword', {
         schema: {
             body: ChangeSchema,
             summary: 'Change password',
