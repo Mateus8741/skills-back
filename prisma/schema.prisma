@@ -42,12 +42,21 @@ model Location {
   userId       String
 }
 
+enum Category {
+  ELECTRICIAN
+  PAINTER
+  BRICKLAYER
+  GARDENER
+  PLUMBER
+  OTHERS
+}
+
 model Service {
   id              String            @id @default(cuid())
   name            String
   description     String
   price           Float
-  category        String
+  category        Category
   serviceLocation ServiceLocation[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
