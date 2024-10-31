@@ -29,18 +29,16 @@ export async function CreateService(app: FastifyInstance) {
 
         await prisma.service.create({
             data: {
+                name,
+                price,
+                userPhoneNumber: user.phoneNumber,
                 category,
                 description,
                 serviceLocation: {
-                    create: {
-                        city: location.city,
-                        number: location.number,
-                        state: location.state,
-                        street: location.street,
+                    createMany: {
+                        data: [ location ],
                     },
                 },
-                name,
-                price,
                 userId,
             },
         })

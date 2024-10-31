@@ -56,7 +56,8 @@ model Service {
   name            String
   description     String
   price           Float
-  category        Category
+  category        Category          @default(OTHERS)
+  userPhoneNumber String
   serviceLocation ServiceLocation[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
@@ -66,11 +67,15 @@ model Service {
 
 model ServiceLocation {
   id           String   @id @default(cuid())
+  city         String
+  state        String
   street       String
   neighborhood String
   complement   String
   reference    String
   number       Int      @default(0)
+  latitude     Float
+  longitude    Float
   serviceId    String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
