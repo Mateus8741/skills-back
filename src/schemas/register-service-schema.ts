@@ -7,6 +7,7 @@ export const Category = z.enum ([
     'GARDENER',
     'PLUMBER',
     'CLEANER',
+    'BABYSITTER',
     'OTHERS',
   ]).default('OTHERS');
 

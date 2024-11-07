@@ -49,6 +49,7 @@ enum Category {
   GARDENER
   PLUMBER
   CLEANER
+  BABYSITTER
   OTHERS
 }
 
