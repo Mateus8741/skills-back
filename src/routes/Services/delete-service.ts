@@ -16,7 +16,7 @@ export async function DeleteService(app: FastifyInstance) {
         }
     }, async (request, reply) => {
         const { serviceId } = request.params
-        const userId = request.getCurrentUserId()
+        const userId = await request.getCurrentUserId()
 
         if (!userId) {
             return reply.status(401).send({ error: "Usuário não autenticado" });
@@ -25,12 +25,22 @@ export async function DeleteService(app: FastifyInstance) {
         const service = await prisma.service.findFirst({
             where: {
                 id: serviceId,
+                userId,
             },
+            include: {
+                serviceLocation: true
+            }
         })
 
         if (!service) {
             return reply.status(404).send({ error: "Serviço não encontrado" });
         }
+
+        await prisma.serviceLocation.deleteMany({
+            where: {
+                serviceId
+            }
+        })
 
         await prisma.service.delete({
             where: {
@@ -38,6 +48,6 @@ export async function DeleteService(app: FastifyInstance) {
             },
         })
 
-        return reply.status(204).send({ message: 'Serviço deletado com sucesso' })
+        return reply.status(204).send()
     })
 }

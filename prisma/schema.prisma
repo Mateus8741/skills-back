@@ -48,6 +48,7 @@ enum Category {
   BRICKLAYER
   GARDENER
   PLUMBER
+  CLEANER
   OTHERS
 }
 
@@ -58,6 +59,8 @@ model Service {
   price           Float
   category        Category          @default(OTHERS)
   userPhoneNumber String
+  rating          Float             @default(0)
+  isAuthenticaded Boolean           @default(false)
   serviceLocation ServiceLocation[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt

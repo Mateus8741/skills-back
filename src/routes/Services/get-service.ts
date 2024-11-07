@@ -19,12 +19,30 @@ export async function GetService(app: FastifyInstance) {
             })
         }
 
-        const service = await prisma.service.findMany({
+        const services = await prisma.service.findMany({
             where: {
                 userId,
             },
+            include: {
+                serviceLocation: true,
+                User: {
+                    select: {
+                        phoneNumber: true
+                    }
+                }
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
         })
 
-        return reply.status(200).send(service)
+        const formattedServices = services.map(service => ({
+            ...service,
+            price: service.price.toString(),
+            location: service.serviceLocation[0],
+            userPhoneNumber: service.User.phoneNumber,
+        }))
+
+        return reply.status(200).send(formattedServices)
     })
 }

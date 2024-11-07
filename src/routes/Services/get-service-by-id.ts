@@ -24,12 +24,27 @@ export async function GetServiceById(app: FastifyInstance) {
       where: {
         id: serviceId,
       },
+      include: {
+        serviceLocation: true,
+        User: {
+          select: {
+            phoneNumber: true
+          }
+        }
+      }
     })
 
     if (!service) {
       return reply.status(404).send({ error: "Serviço não encontrado" });
     }
 
-    return reply.status(200).send(service)
+    const formattedService = {
+      ...service,
+      price: service.price.toString(),
+      location: service.serviceLocation[0],
+      userPhoneNumber: service.User.phoneNumber,
+    }
+
+    return reply.status(200).send(formattedService)
   })
 }

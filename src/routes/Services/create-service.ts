@@ -6,52 +6,62 @@ import { ServiceSchema } from '../../schemas/register-service-schema'
 export async function CreateService(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post('/service', {
     schema: {
-        body: ServiceSchema,
-        summary: 'Create a new service',
-        tags: ['Services'],
+      body: ServiceSchema,
+      summary: 'Create a new service',
+      tags: ['Services'],
     }
   }, async (request, reply) => {
     try {
-        const { category, description, location, name, price } = request.body
-        const userId = await request.getCurrentUserId()
+      const { 
+        category, 
+        description, 
+        location,
+        name, 
+        price 
+      } = request.body
+      const userId = await request.getCurrentUserId()
 
-        const user = await prisma.user.findFirst({
-            where: {
-                id: userId,
-            },
+      const user = await prisma.user.findFirst({
+        where: { id: userId },
+      })
+
+      if (!user) {
+        return reply.status(404).send({
+          message: 'User not found',
         })
+      }
 
-        if (!user) {
-            return reply.status(404).send({
-                message: 'User not found',
-            })
+      const service = await prisma.service.create({
+        data: {
+          name,
+          description,
+          price: Number(price),
+          category,
+          userPhoneNumber: user.phoneNumber,
+          rating: 0,
+          isAuthenticaded: false,
+          userId: user.id,
+          serviceLocation: {
+            createMany: {
+              data: [ location ],
+            },
+          }
+        },
+        include: {
+          serviceLocation: true
         }
+      })
 
-        await prisma.service.create({
-            data: {
-                name,
-                price,
-                userPhoneNumber: user.phoneNumber,
-                category,
-                description,
-                serviceLocation: {
-                    createMany: {
-                        data: [ location ],
-                    },
-                },
-                userId,
-            },
-        })
-
-        return reply.status(200).send({
-            message: 'Serviço criado com sucesso',
-          })
+      return reply.status(201).send({
+        message: 'Serviço criado com sucesso',
+        service
+      })
     } catch (error) {
-        console.error(error)
-        
-        return reply.status(500).send({
-            message: 'Erro ao criar serviço',
-        })
+      console.error(error)
+      
+      return reply.status(500).send({
+        message: 'Erro ao criar serviço',
+      })
     }
   })
 }
