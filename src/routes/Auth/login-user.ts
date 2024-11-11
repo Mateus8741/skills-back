@@ -14,7 +14,7 @@ export async function LoginUser(app: FastifyInstance) {
     {
       schema: {
         body: LoginSchema,
-        summary: 'Register a new user',
+        summary: 'Login user',
         tags: ['Auth'],
       },
     },
@@ -44,33 +44,61 @@ export async function LoginUser(app: FastifyInstance) {
           })
         }
 
-        const token = await reply.jwtSign(
-            {
-                sub: user.id,
-            },
-            {
-                expiresIn: '1h',
-            }
+        // Gerar access token (curta duração - 15min)
+        const accessToken = await reply.jwtSign(
+          {
+            sub: user.id,
+            type: 'access_token'
+          },
+          {
+            expiresIn: '15m',
+          }
         )
 
+        // Gerar refresh token (longa duração - 7 dias)
+        const refreshToken = await reply.jwtSign(
+          {
+            sub: user.id,
+            type: 'refresh_token'
+          },
+          {
+            expiresIn: '7d',
+          }
+        )
+
+        // Salvar refresh token no banco
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { refreshToken }
+        })
+
+        // Configurar cookie seguro com o refresh token
+        reply.setCookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/',
+          maxAge: 60 * 60 * 24 * 7, // 7 dias
+        })
+
         return reply.status(200).send({
-            token,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                isAuthenticated: user.isAuthenticated,
-                rating: user.rating,
-            },
+          accessToken,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            isAuthenticated: user.isAuthenticated,
+            rating: user.rating,
+          },
         })
         
       } catch (error) {
         console.error('Error on login user', error)
         
         return reply.status(500).send({
-            message: 'Erro interno',
+          message: 'Erro interno',
         })
       }
     }

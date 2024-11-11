@@ -14,6 +14,7 @@ import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import { ForgotPassword } from "./routes/Auth/forgot-password";
 import { LoginUser } from "./routes/Auth/login-user";
+import { RefreshToken } from "./routes/Auth/refresh-token";
 import { RegisterUser } from "./routes/Auth/register-user";
 import { CreateService } from "./routes/Services/create-service";
 import { GetService } from "./routes/Services/get-service";
@@ -53,6 +54,7 @@ app.register(auth)
 
 app.register(RegisterUser)
 app.register(LoginUser)
+app.register(RefreshToken)
 app.register(ForgotPassword)
 
 app.register(CreateService)

@@ -27,6 +27,7 @@ model User {
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   Service         Service[]
+  refreshToken    String?
 }
 
 model Location {
