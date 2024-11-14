@@ -7,42 +7,54 @@ export async function GetService(app: FastifyInstance) {
     .withTypeProvider<ZodTypeProvider>()
     .get('/service', {
         schema: {
-            summary: 'Get a service',
+            summary: 'Get all services',
             tags: ['Services'],
         }
     }, async (request, reply) => {
-        const userId = await request.getCurrentUserId()
+        try {
+            const services = await prisma.service.findMany({
+                include: {
+                    serviceLocation: true,
+                    User: {
+                        select: {
+                            phoneNumber: true,
+                            firstName: true,
+                            lastName: true,
+                            rating: true,
+                            isAuthenticated: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            })
 
-        if (!userId) {
-            return reply.status(401).send({
-                message: 'Não autorizado',
+            const formattedServices = services.map(service => ({
+                id: service.id,
+                name: service.name,
+                description: service.description,
+                price: service.price.toString(),
+                category: service.category,
+                rating: service.rating,
+                isAuthenticaded: service.isAuthenticaded,
+                createdAt: service.createdAt,
+                location: service.serviceLocation[0],
+                userPhoneNumber: service.User.phoneNumber,
+                provider: {
+                    firstName: service.User.firstName,
+                    lastName: service.User.lastName,
+                    rating: service.User.rating,
+                    isAuthenticated: service.User.isAuthenticated
+                }
+            }))
+
+            return reply.status(200).send(formattedServices)
+        } catch (error) {
+            console.error('Error fetching services:', error)
+            return reply.status(500).send({
+                message: 'Erro ao buscar serviços'
             })
         }
-
-        const services = await prisma.service.findMany({
-            where: {
-                userId,
-            },
-            include: {
-                serviceLocation: true,
-                User: {
-                    select: {
-                        phoneNumber: true
-                    }
-                }
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        })
-
-        const formattedServices = services.map(service => ({
-            ...service,
-            price: service.price.toString(),
-            location: service.serviceLocation[0],
-            userPhoneNumber: service.User.phoneNumber,
-        }))
-
-        return reply.status(200).send(formattedServices)
     })
 }
