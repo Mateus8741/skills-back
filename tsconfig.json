@@ -13,5 +13,5 @@
       "moduleResolution": "node16"
     },
   
-    "include": ["src", "prisma/seed.ts"]
+    "include": ["src", "src/prisma/seed.ts"]
   }

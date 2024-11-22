@@ -27,6 +27,7 @@ app.register(fastifyJwt, { secret: 'supersecret-skills' })
 
 app.register(fastifyCors, {
     origin: "*",
+    credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 });
