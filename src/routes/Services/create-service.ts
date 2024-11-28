@@ -34,7 +34,7 @@ export async function CreateService(app: FastifyInstance) {
             data: {
               name,
               description,
-              price: Number(price),
+              price,
               category,
               userPhoneNumber: user.phoneNumber,
               rating: 0,
