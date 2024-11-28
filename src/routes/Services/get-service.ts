@@ -34,7 +34,7 @@ export async function GetService(app: FastifyInstance) {
                 id: service.id,
                 name: service.name,
                 description: service.description,
-                price: service.price.toString(),
+                price: service.price,
                 category: service.category,
                 rating: service.rating,
                 isAuthenticaded: service.isAuthenticaded,
