@@ -67,6 +67,12 @@ export async function CreateService(app: FastifyInstance) {
       })
     } catch (error) {
       console.error(error)
+
+      if (error instanceof Error && error.message.includes('unauthorized')) {
+        return reply.status(401).send({
+            message: 'Usuário não autenticado'
+        })
+    }
       
       return reply.status(500).send({
         message: 'Erro ao criar serviços',

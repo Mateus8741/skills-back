@@ -52,6 +52,13 @@ export async function GetService(app: FastifyInstance) {
             return reply.status(200).send(formattedServices)
         } catch (error) {
             console.error('Error fetching services:', error)
+            
+            if (error instanceof Error && error.message.includes('unauthorized')) {
+                return reply.status(401).send({
+                    message: 'Usuário não autenticado'
+                })
+            }
+
             return reply.status(500).send({
                 message: 'Erro ao buscar serviços'
             })
