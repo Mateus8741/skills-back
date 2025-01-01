@@ -12,8 +12,6 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
-import { GetApplications } from "./routes/Applications/get-application";
-import { UpdateApplicationStatus } from "./routes/Applications/update-application-status";
 import { ForgotPassword } from "./routes/Auth/forgot-password";
 import { LoginUser } from "./routes/Auth/login-user";
 import { RefreshToken } from "./routes/Auth/refresh-token";
@@ -21,6 +19,7 @@ import { RegisterUser } from "./routes/Auth/register-user";
 import { CreateService } from "./routes/Services/create-service";
 import { GetService } from "./routes/Services/get-service";
 import { GetServiceById } from "./routes/Services/get-service-by-id";
+import { GetUserServices } from "./routes/Services/get-user-services";
 
 const app = fastify().withTypeProvider();
 
@@ -63,8 +62,7 @@ app.register(ForgotPassword)
 app.register(CreateService)
 app.register(GetService)
 app.register(GetServiceById)
-app.register(GetApplications)
-app.register(UpdateApplicationStatus)
+app.register(GetUserServices)
 
 app.listen({
     port: 3100,
