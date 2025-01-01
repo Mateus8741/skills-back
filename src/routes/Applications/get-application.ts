@@ -11,33 +11,52 @@ export async function GetApplications(app: FastifyInstance) {
   }, async (request, reply) => {
     try {
       const userId = await request.getCurrentUserId()
-      console.log(userId)
 
       if (!userId) {
         return reply.status(401).send({ message: 'Usuário não autenticado' })
       }
 
-      // Buscar todas as candidaturas feitas pelo usuário
-      const applications = await prisma.application.findMany({
+      // Buscar o usuário primeiro para verificar se existe
+      const user = await prisma.user.findUnique({
+        where: { id: userId }
+      })
+
+      if (!user) {
+        return reply.status(404).send({ message: 'Usuário não encontrado' })
+      }
+
+      // Buscar todos os serviços que o usuário se candidatou
+      const userApplications = await prisma.service.findMany({
         where: {
-          userId,
+          Application: {
+            some: {
+              userId: userId
+            }
+          }
         },
-        include: {
-          Service: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          price: true,
+          category: true,
+          rating: true,
+          serviceLocation: true,
+          User: {
             select: {
-              name: true,
-              description: true,
-              price: true,
-              category: true,
-              rating: true,
-              serviceLocation: true,
-              User: {
-                select: {
-                  phoneNumber: true,
-                  firstName: true,
-                  lastName: true,
-                }
-              }
+              firstName: true,
+              lastName: true,
+              phoneNumber: true,
+            }
+          },
+          Application: {
+            where: {
+              userId: userId
+            },
+            select: {
+              id: true,
+              status: true,
+              createdAt: true,
             }
           }
         },
@@ -47,29 +66,33 @@ export async function GetApplications(app: FastifyInstance) {
       })
 
       // Formatar os dados para o frontend
-      const formattedApplications = applications.map(app => ({
-        id: app.id,
-        status: app.status,
-        createdAt: app.createdAt,
+      const formattedServices = userApplications.map(service => ({
+        id: service.Application[0].id, // ID da candidatura
+        status: service.Application[0].status,
+        createdAt: service.Application[0].createdAt,
         service: {
-          name: app.Service.name,
-          description: app.Service.description,
-          price: app.Service.price,
-          category: app.Service.category,
-          rating: app.Service.rating,
-          location: app.Service.serviceLocation[0],
+          id: service.id,
+          name: service.name,
+          description: service.description,
+          price: service.price,
+          category: service.category,
+          rating: service.rating,
+          location: service.serviceLocation[0],
           provider: {
-            firstName: app.Service.User.firstName,
-            lastName: app.Service.User.lastName,
-            phoneNumber: app.Service.User.phoneNumber,
+            firstName: service.User.firstName,
+            lastName: service.User.lastName,
+            phoneNumber: service.User.phoneNumber,
           }
         }
       }))
 
-      return reply.status(200).send(formattedApplications)
+      return reply.status(200).send(formattedServices)
     } catch (error) {
       console.error('Error fetching user applications:', error)
-      return reply.status(500).send({ message: 'Erro ao buscar candidaturas do usuário' })
+      return reply.status(500).send({ 
+        message: 'Erro ao buscar candidaturas do usuário',
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
+      })
     }
   })
 }
