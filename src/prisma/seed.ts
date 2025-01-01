@@ -1,18 +1,22 @@
 import { Category, PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
+  await prisma.user.deleteMany()
   await prisma.service.deleteMany()
   await prisma.serviceLocation.deleteMany()
   await prisma.location.deleteMany()
+
+  const password = await bcrypt.hash('123456', 10)
 
   const user1 = await prisma.user.create({
     data: {
       firstName: 'João',
       lastName: 'Silva',
       email: 'joao@example.com',
-      password: '123456',
+      password,
       phoneNumber: '11999999999',
       isAuthenticated: true,
       rating: 4.5,
@@ -33,7 +37,7 @@ async function main() {
       firstName: 'Maria',
       lastName: 'Santos',
       email: 'maria@example.com',
-      password: '123456',
+      password,
       phoneNumber: '11988888888',
       isAuthenticated: true,
       rating: 4.8,
@@ -44,6 +48,53 @@ async function main() {
           complement: 'Casa',
           reference: 'Próximo à farmácia',
           houseNumber: 456,
+        }
+      }
+    }
+  })
+  
+  const user3 = await prisma.user.create({
+    data: {
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        password,
+        phoneNumber: "123456789",
+        isAuthenticated: false,
+        rating: 4.5,
+        location: {
+          create: {
+            street: "123 Main St",
+            neighborhood: "Downtown",
+            complement: "Apt 4B",
+            reference: "Near Central Park",
+            houseNumber: 123
+        }
+        },
+    }
+  })
+
+  await prisma.service.create({
+    data: {
+      name: 'Encanamento Residencial',
+      description: 'Serviço completo de encanamento residencial',
+      price: 120.00,
+      category: Category.PLUMBER,
+      userPhoneNumber: user3.phoneNumber,
+      rating: 4.6,
+      isAuthenticaded: true,
+      userId: user3.id,
+      serviceLocation: {
+        create: {
+          city: 'São Paulo',
+          state: 'SP',
+          street: 'Rua dos Encanadores',
+          neighborhood: 'Vila Mariana',
+          complement: 'Casa 1',
+          reference: 'Próximo à escola',
+          number: 456,
+          latitude: -23.540520,
+          longitude: -46.623308,
         }
       }
     }
