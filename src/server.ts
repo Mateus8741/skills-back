@@ -12,6 +12,7 @@ import fastifySwaggerUi from "@fastify/swagger-ui";
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
+import { CreateApplication } from "./routes/Applications/create-application";
 import { ForgotPassword } from "./routes/Auth/forgot-password";
 import { LoginUser } from "./routes/Auth/login-user";
 import { RefreshToken } from "./routes/Auth/refresh-token";
@@ -63,6 +64,7 @@ app.register(CreateService)
 app.register(GetService)
 app.register(GetServiceById)
 app.register(GetUserServices)
+app.register(CreateApplication)
 
 app.listen({
     port: 3100,
