@@ -22,6 +22,7 @@ import { GetService } from "./routes/Services/get-service";
 import { GetServiceById } from "./routes/Services/get-service-by-id";
 import { GetUserServices } from "./routes/Services/get-user-services";
 import { ReportService } from "./routes/Services/report-service";
+import { ChangePassword } from "./routes/Users/change-password";
 import { UpdateProfile } from "./routes/Users/update-profile";
 
 const app = fastify().withTypeProvider();
@@ -71,6 +72,8 @@ app.register(CreateApplication)
 app.register(ReportService)
 
 app.register(UpdateProfile)
+
+app.register(ChangePassword)
 
 app.listen({
     port: 3100,
