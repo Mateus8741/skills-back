@@ -21,6 +21,7 @@ import { CreateService } from "./routes/Services/create-service";
 import { GetService } from "./routes/Services/get-service";
 import { GetServiceById } from "./routes/Services/get-service-by-id";
 import { GetUserServices } from "./routes/Services/get-user-services";
+import { ReportService } from "./routes/Services/report-service";
 
 const app = fastify().withTypeProvider();
 
@@ -65,6 +66,8 @@ app.register(GetService)
 app.register(GetServiceById)
 app.register(GetUserServices)
 app.register(CreateApplication)
+
+app.register(ReportService)
 
 app.listen({
     port: 3100,
