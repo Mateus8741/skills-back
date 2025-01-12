@@ -51,7 +51,7 @@ export async function LoginUser(app: FastifyInstance) {
             type: 'access_token'
           },
           {
-            expiresIn: '15552000s',
+            expiresIn: '30d',
           }
         )
 
@@ -62,7 +62,7 @@ export async function LoginUser(app: FastifyInstance) {
             type: 'refresh_token'
           },
           {
-            expiresIn: '15552000s',
+            expiresIn: '30d',
           }
         )
 
@@ -78,7 +78,7 @@ export async function LoginUser(app: FastifyInstance) {
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
           path: '/',
-          maxAge: 6 * 30 * 24 * 60 * 60,
+          maxAge: 60 * 60 * 24 * 30,
         })
 
         return reply.status(200).send({
