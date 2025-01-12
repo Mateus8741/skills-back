@@ -18,6 +18,7 @@ import { LoginUser } from "./routes/Auth/login-user";
 import { RefreshToken } from "./routes/Auth/refresh-token";
 import { RegisterUser } from "./routes/Auth/register-user";
 import { CreateService } from "./routes/Services/create-service";
+import { DeleteAccount } from "./routes/Services/delete-account";
 import { GetService } from "./routes/Services/get-service";
 import { GetServiceById } from "./routes/Services/get-service-by-id";
 import { GetUserServices } from "./routes/Services/get-user-services";
@@ -74,6 +75,8 @@ app.register(ReportService)
 app.register(UpdateProfile)
 
 app.register(ChangePassword)
+
+app.register(DeleteAccount)
 
 app.listen({
     port: 3100,
