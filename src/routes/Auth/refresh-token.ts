@@ -27,7 +27,7 @@ export async function RefreshToken(app: FastifyInstance) {
           {
             sign: {
               sub: userId,
-              expiresIn: '15m',
+              expiresIn: '15552000s',
             },
           }
         )
@@ -36,7 +36,7 @@ export async function RefreshToken(app: FastifyInstance) {
           {
             sign: {
               sub: userId,
-              expiresIn: '7d',
+              expiresIn: '15552000s',
             },
           }
         )
@@ -52,7 +52,7 @@ export async function RefreshToken(app: FastifyInstance) {
             secure: true,
             sameSite: true,
             httpOnly: true,
-            maxAge: 60 * 60 * 24 * 7, // 7 dias
+            maxAge: 6 * 30 * 24 * 60 * 60,
           })
           .status(200)
           .send({
