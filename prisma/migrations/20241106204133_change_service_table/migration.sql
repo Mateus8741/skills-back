@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Service" ADD COLUMN     "isAuthenticaded" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "rating" DOUBLE PRECISION NOT NULL DEFAULT 0;

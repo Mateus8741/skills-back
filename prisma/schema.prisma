@@ -13,3 +13,120 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  userId    String
+  serviceId String
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  User    User    @relation(fields: [userId], references: [id])
+  Service Service @relation(fields: [serviceId], references: [id])
+
+  @@unique([userId, serviceId])
+}
+
+model User {
+  id              String          @id @default(cuid())
+  firstName       String
+  lastName        String
+  email           String          @unique
+  password        String
+  phoneNumber     String
+  isAuthenticated Boolean         @default(false)
+  rating          Float           @default(0)
+  location        Location[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  Service         Service[]
+  Application     Application[]
+  refreshToken    String?
+  ServiceReport   ServiceReport[]
+}
+
+model Location {
+  id           String   @id @default(cuid())
+  street       String
+  neighborhood String
+  complement   String
+  reference    String
+  houseNumber  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  User         User     @relation(fields: [userId], references: [id])
+  userId       String
+}
+
+enum Category {
+  ELECTRICIAN
+  PAINTER
+  BRICKLAYER
+  GARDENER
+  PLUMBER
+  CLEANER
+  BABYSITTER
+  OTHERS
+}
+
+model Service {
+  id              String            @id @default(cuid())
+  name            String
+  description     String
+  price           Float
+  category        Category          @default(OTHERS)
+  userPhoneNumber String
+  rating          Float             @default(0)
+  isAuthenticaded Boolean           @default(false)
+  serviceLocation ServiceLocation[]
+  Application     Application[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  User            User              @relation(fields: [userId], references: [id])
+  userId          String
+  ServiceReport   ServiceReport[]
+}
+
+model ServiceLocation {
+  id           String   @id @default(cuid())
+  city         String
+  state        String
+  street       String
+  neighborhood String
+  complement   String
+  reference    String
+  number       Int      @default(0)
+  latitude     Float
+  longitude    Float
+  serviceId    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  Service      Service  @relation(fields: [serviceId], references: [id])
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  REJECTED
+}
+
+model ServiceReport {
+  id          String       @id @default(cuid())
+  reason      String
+  description String
+  status      ReportStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  User      User    @relation(fields: [userId], references: [id])
+  userId    String
+  Service   Service @relation(fields: [serviceId], references: [id])
+  serviceId String
+}
