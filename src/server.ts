@@ -79,6 +79,6 @@ app.register(ChangePassword)
 app.register(DeleteAccount)
 
 app.listen({
-    port: 3100,
+    port: 3101,
     host: "0.0.0.0",
 }, () => console.log('Server is running on port 3100'));
