@@ -38,9 +38,7 @@ app.register(fastifyCors, {
 });
 
 app.register(fastifySwagger, {
-	swagger: {
-		consumes: ["application/json"],
-		produces: ["application/json"],
+	openapi: {
 		info: {
 			title: "Skill's API",
 			description: "Rotas do Skill's",
@@ -56,6 +54,11 @@ app.register(fastifySwaggerUi, {
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+app.addHook("onError", async (request, reply, error) => {
+	request.log.error({ err: error }, error.message);
+});
+
 app.register(auth);
 
 app.register(RegisterUser);
