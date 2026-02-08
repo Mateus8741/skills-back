@@ -23,6 +23,11 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 
 // src/server.ts
+var import_cookie = __toESM(require("@fastify/cookie"));
+var import_cors = __toESM(require("@fastify/cors"));
+var import_jwt = __toESM(require("@fastify/jwt"));
+var import_swagger = __toESM(require("@fastify/swagger"));
+var import_swagger_ui = __toESM(require("@fastify/swagger-ui"));
 var import_fastify = __toESM(require("fastify"));
 var import_fastify_type_provider_zod = require("fastify-type-provider-zod");
 
@@ -41,21 +46,73 @@ var auth = (0, import_fastify_plugin.default)(async (app2) => {
   });
 });
 
-// src/server.ts
-var import_swagger = __toESM(require("@fastify/swagger"));
-var import_swagger_ui = __toESM(require("@fastify/swagger-ui"));
-var import_cookie = __toESM(require("@fastify/cookie"));
-var import_cors = __toESM(require("@fastify/cors"));
-var import_jwt = __toESM(require("@fastify/jwt"));
-
 // src/routes/Applications/create-application.ts
 var import_zod = require("zod");
 
 // src/prisma/prisma-client.ts
-var import_client = require("@prisma/client");
-var prisma = new import_client.PrismaClient({
-  log: ["query"]
+var import_adapter_pg = require("@prisma/adapter-pg");
+var import_config = require("dotenv/config");
+
+// generated/prisma/client.ts
+var path = __toESM(require("path"));
+var import_node_url = require("url");
+
+// generated/prisma/internal/class.ts
+var runtime = __toESM(require("@prisma/client/runtime/client"));
+var config = {
+  "previewFeatures": [],
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
+  "activeProvider": "postgresql",
+  "inlineSchema": '// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = "prisma-client"\n  output   = "../generated/prisma"\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nenum ApplicationStatus {\n  PENDING\n  ACCEPTED\n  REJECTED\n}\n\nmodel Application {\n  id        String            @id @default(cuid())\n  userId    String\n  serviceId String\n  status    ApplicationStatus @default(PENDING)\n  createdAt DateTime          @default(now())\n  updatedAt DateTime          @updatedAt\n\n  User    User    @relation(fields: [userId], references: [id])\n  Service Service @relation(fields: [serviceId], references: [id])\n\n  @@unique([userId, serviceId])\n}\n\nmodel User {\n  id              String          @id @default(cuid())\n  firstName       String\n  lastName        String\n  email           String          @unique\n  password        String\n  phoneNumber     String\n  isAuthenticated Boolean         @default(false)\n  rating          Float           @default(0)\n  location        Location[]\n  createdAt       DateTime        @default(now())\n  updatedAt       DateTime        @updatedAt\n  Service         Service[]\n  Application     Application[]\n  refreshToken    String?\n  ServiceReport   ServiceReport[]\n}\n\nmodel Location {\n  id           String   @id @default(cuid())\n  street       String\n  neighborhood String\n  complement   String\n  reference    String\n  houseNumber  Int      @default(0)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  User         User     @relation(fields: [userId], references: [id])\n  userId       String\n}\n\nenum Category {\n  ELECTRICIAN\n  PAINTER\n  BRICKLAYER\n  GARDENER\n  PLUMBER\n  CLEANER\n  BABYSITTER\n  OTHERS\n}\n\nmodel Service {\n  id              String            @id @default(cuid())\n  name            String\n  description     String\n  price           Float\n  category        Category          @default(OTHERS)\n  userPhoneNumber String\n  rating          Float             @default(0)\n  isAuthenticaded Boolean           @default(false)\n  serviceLocation ServiceLocation[]\n  Application     Application[]\n  createdAt       DateTime          @default(now())\n  updatedAt       DateTime          @updatedAt\n  User            User              @relation(fields: [userId], references: [id])\n  userId          String\n  ServiceReport   ServiceReport[]\n}\n\nmodel ServiceLocation {\n  id           String   @id @default(cuid())\n  city         String\n  state        String\n  street       String\n  neighborhood String\n  complement   String\n  reference    String\n  number       Int      @default(0)\n  latitude     Float\n  longitude    Float\n  serviceId    String\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  Service      Service  @relation(fields: [serviceId], references: [id])\n}\n\nenum ReportStatus {\n  PENDING\n  RESOLVED\n  REJECTED\n}\n\nmodel ServiceReport {\n  id          String       @id @default(cuid())\n  reason      String\n  description String\n  status      ReportStatus @default(PENDING)\n  createdAt   DateTime     @default(now())\n  updatedAt   DateTime     @updatedAt\n\n  User      User    @relation(fields: [userId], references: [id])\n  userId    String\n  Service   Service @relation(fields: [serviceId], references: [id])\n  serviceId String\n}\n',
+  "runtimeDataModel": {
+    "models": {},
+    "enums": {},
+    "types": {}
+  }
+};
+config.runtimeDataModel = JSON.parse('{"models":{"Application":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"userId","kind":"scalar","type":"String"},{"name":"serviceId","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"ApplicationStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"ApplicationToUser"},{"name":"Service","kind":"object","type":"Service","relationName":"ApplicationToService"}],"dbName":null},"User":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"firstName","kind":"scalar","type":"String"},{"name":"lastName","kind":"scalar","type":"String"},{"name":"email","kind":"scalar","type":"String"},{"name":"password","kind":"scalar","type":"String"},{"name":"phoneNumber","kind":"scalar","type":"String"},{"name":"isAuthenticated","kind":"scalar","type":"Boolean"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"location","kind":"object","type":"Location","relationName":"LocationToUser"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"Service","kind":"object","type":"Service","relationName":"ServiceToUser"},{"name":"Application","kind":"object","type":"Application","relationName":"ApplicationToUser"},{"name":"refreshToken","kind":"scalar","type":"String"},{"name":"ServiceReport","kind":"object","type":"ServiceReport","relationName":"ServiceReportToUser"}],"dbName":null},"Location":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"street","kind":"scalar","type":"String"},{"name":"neighborhood","kind":"scalar","type":"String"},{"name":"complement","kind":"scalar","type":"String"},{"name":"reference","kind":"scalar","type":"String"},{"name":"houseNumber","kind":"scalar","type":"Int"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"LocationToUser"},{"name":"userId","kind":"scalar","type":"String"}],"dbName":null},"Service":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"name","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"price","kind":"scalar","type":"Float"},{"name":"category","kind":"enum","type":"Category"},{"name":"userPhoneNumber","kind":"scalar","type":"String"},{"name":"rating","kind":"scalar","type":"Float"},{"name":"isAuthenticaded","kind":"scalar","type":"Boolean"},{"name":"serviceLocation","kind":"object","type":"ServiceLocation","relationName":"ServiceToServiceLocation"},{"name":"Application","kind":"object","type":"Application","relationName":"ApplicationToService"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"ServiceToUser"},{"name":"userId","kind":"scalar","type":"String"},{"name":"ServiceReport","kind":"object","type":"ServiceReport","relationName":"ServiceToServiceReport"}],"dbName":null},"ServiceLocation":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"city","kind":"scalar","type":"String"},{"name":"state","kind":"scalar","type":"String"},{"name":"street","kind":"scalar","type":"String"},{"name":"neighborhood","kind":"scalar","type":"String"},{"name":"complement","kind":"scalar","type":"String"},{"name":"reference","kind":"scalar","type":"String"},{"name":"number","kind":"scalar","type":"Int"},{"name":"latitude","kind":"scalar","type":"Float"},{"name":"longitude","kind":"scalar","type":"Float"},{"name":"serviceId","kind":"scalar","type":"String"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"Service","kind":"object","type":"Service","relationName":"ServiceToServiceLocation"}],"dbName":null},"ServiceReport":{"fields":[{"name":"id","kind":"scalar","type":"String"},{"name":"reason","kind":"scalar","type":"String"},{"name":"description","kind":"scalar","type":"String"},{"name":"status","kind":"enum","type":"ReportStatus"},{"name":"createdAt","kind":"scalar","type":"DateTime"},{"name":"updatedAt","kind":"scalar","type":"DateTime"},{"name":"User","kind":"object","type":"User","relationName":"ServiceReportToUser"},{"name":"userId","kind":"scalar","type":"String"},{"name":"Service","kind":"object","type":"Service","relationName":"ServiceToServiceReport"},{"name":"serviceId","kind":"scalar","type":"String"}],"dbName":null}},"enums":{},"types":{}}');
+async function decodeBase64AsWasm(wasmBase64) {
+  const { Buffer: Buffer2 } = await import("buffer");
+  const wasmArray = Buffer2.from(wasmBase64, "base64");
+  return new WebAssembly.Module(wasmArray);
+}
+config.compilerWasm = {
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.mjs"),
+  getQueryCompilerWasmModule: async () => {
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.postgresql.wasm-base64.mjs");
+    return await decodeBase64AsWasm(wasm);
+  },
+  importName: "./query_compiler_fast_bg.js"
+};
+function getPrismaClientClass() {
+  return runtime.getPrismaClient(config);
+}
+
+// generated/prisma/internal/prismaNamespace.ts
+var runtime2 = __toESM(require("@prisma/client/runtime/client"));
+var getExtensionContext = runtime2.Extensions.getExtensionContext;
+var NullTypes2 = {
+  DbNull: runtime2.NullTypes.DbNull,
+  JsonNull: runtime2.NullTypes.JsonNull,
+  AnyNull: runtime2.NullTypes.AnyNull
+};
+var TransactionIsolationLevel = runtime2.makeStrictEnum({
+  ReadUncommitted: "ReadUncommitted",
+  ReadCommitted: "ReadCommitted",
+  RepeatableRead: "RepeatableRead",
+  Serializable: "Serializable"
 });
+var defineExtension = runtime2.Extensions.defineExtension;
+
+// generated/prisma/client.ts
+globalThis["__dirname"] = path.dirname((0, import_node_url.fileURLToPath)(require("url").pathToFileURL(__filename).href));
+var PrismaClient = getPrismaClientClass();
+
+// src/prisma/prisma-client.ts
+var connectionString = `${process.env.DATABASE_URL}`;
+var adapter = new import_adapter_pg.PrismaPg({ connectionString });
+var prisma = new PrismaClient({ adapter });
 
 // src/routes/Applications/create-application.ts
 async function CreateApplication(app2) {
@@ -954,7 +1011,7 @@ async function UpdateProfile(app2) {
 // src/server.ts
 var app = (0, import_fastify.default)().withTypeProvider();
 app.register(import_cookie.default);
-app.register(import_jwt.default, { secret: "supersecret-skills" });
+app.register(import_jwt.default, { secret: process.env.JWT_SECRET });
 app.register(import_cors.default, {
   origin: "*",
   credentials: true,
@@ -992,7 +1049,10 @@ app.register(ReportService);
 app.register(UpdateProfile);
 app.register(ChangePassword);
 app.register(DeleteAccount);
-app.listen({
-  port: 3101,
-  host: "0.0.0.0"
-}, () => console.log("Server is running on port 3100"));
+app.listen(
+  {
+    port: Number.parseInt(process.env.PORT),
+    host: process.env.HOST
+  },
+  () => console.log(`Server is running on port ${process.env.PORT}`)
+);
