@@ -1,17 +1,16 @@
-import fastify from "fastify";
-import {
-    jsonSchemaTransform,
-    serializerCompiler,
-    validatorCompiler
-} from "fastify-type-provider-zod";
-import { auth } from './middleware/verify-jwt';
+import fastifyCookie from "@fastify/cookie";
+import fastifyCors from "@fastify/cors";
+import fastifyJwt, { type Secret } from "@fastify/jwt";
 
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
-
-import fastifyCookie from '@fastify/cookie';
-import fastifyCors from "@fastify/cors";
-import fastifyJwt from "@fastify/jwt";
+import fastify from "fastify";
+import {
+	jsonSchemaTransform,
+	serializerCompiler,
+	validatorCompiler,
+} from "fastify-type-provider-zod";
+import { auth } from "./middleware/verify-jwt";
 import { CreateApplication } from "./routes/Applications/create-application";
 import { ForgotPassword } from "./routes/Auth/forgot-password";
 import { LoginUser } from "./routes/Auth/login-user";
@@ -28,57 +27,60 @@ import { UpdateProfile } from "./routes/Users/update-profile";
 
 const app = fastify().withTypeProvider();
 
-app.register(fastifyCookie)
-app.register(fastifyJwt, { secret: 'supersecret-skills' })
+app.register(fastifyCookie);
+app.register(fastifyJwt, { secret: process.env.JWT_SECRET as Secret });
 
 app.register(fastifyCors, {
-    origin: "*",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+	origin: "*",
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+	allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 app.register(fastifySwagger, {
-    swagger: {
-        consumes: ["application/json"],
-        produces: ["application/json"],
-        info: {
-            title: "Skill's API",
-            description: "Rotas do Skill's",
-            version: "1.0.0",
-        },
-    },
-    transform: jsonSchemaTransform,
-})
+	swagger: {
+		consumes: ["application/json"],
+		produces: ["application/json"],
+		info: {
+			title: "Skill's API",
+			description: "Rotas do Skill's",
+			version: "1.0.0",
+		},
+	},
+	transform: jsonSchemaTransform,
+});
 
 app.register(fastifySwaggerUi, {
-    routePrefix: "/docs",
-})
+	routePrefix: "/docs",
+});
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
-app.register(auth)
+app.register(auth);
 
-app.register(RegisterUser)
-app.register(LoginUser)
-app.register(RefreshToken)
-app.register(ForgotPassword)
+app.register(RegisterUser);
+app.register(LoginUser);
+app.register(RefreshToken);
+app.register(ForgotPassword);
 
-app.register(CreateService)
-app.register(GetService)
-app.register(GetServiceById)
-app.register(GetUserServices)
-app.register(CreateApplication)
+app.register(CreateService);
+app.register(GetService);
+app.register(GetServiceById);
+app.register(GetUserServices);
+app.register(CreateApplication);
 
-app.register(ReportService)
+app.register(ReportService);
 
-app.register(UpdateProfile)
+app.register(UpdateProfile);
 
-app.register(ChangePassword)
+app.register(ChangePassword);
 
-app.register(DeleteAccount)
+app.register(DeleteAccount);
 
-app.listen({
-    port: 3101,
-    host: "0.0.0.0",
-}, () => console.log('Server is running on port 3100'));
+app.listen(
+	{
+		port: Number.parseInt(process.env.PORT as unknown as string),
+		host: process.env.HOST as string,
+	},
+	() => console.log(`Server is running on port ${process.env.PORT}`),
+);
